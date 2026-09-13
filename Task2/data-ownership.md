@@ -1,0 +1,16 @@
+# Правила владения данными  
+
+| Сущность | Data Owner (бизнес‑владелец) | Data Steward (операционный куратор) | Producer (создаёт запись) | Consumer (потребитель) | Правила изменения (who / how) | Правила качества (checks) |
+|----------|------------------------------|--------------------------------------|---------------------------|------------------------|--------------------------------|----------------------------|
+| Клиент | Департамент *Customer Relationship* (CRM) | Data Office – *MDM Team* | CRM‑система (FU CRM / RB CRM) | Core Banking, Card Processing, Loan System, BI, DWH | Изменения только через MDM API (роль `ClientEditor`) | Уникальность ИНН/ОГРН, проверка формата паспорта, валидация e‑mail |
+| Счёт | Финансовый департамент (Core Banking) | Core Ops – *Account Steward* | Core Banking (FinUnion) | Card Processing, Loan System (для автоплатежей), DWH, BI | Только через Core Banking Service (role `AccountAdmin`) | Баланс ≥ 0, валидные коды валют, проверка статус‑констант |
+| Карта | Платёжный отдел (Card Processing) | Card Ops – *Card Steward* | Card Processing (FinUnion) | Core Banking (для блокировок), DWH, BI | Через Card Management API (role `CardEditor`) | PAN токенизирован, CVV‑hash, проверка сроков |
+| Кредит | Кредитный департамент (Loan System) | Loan Ops – *Loan Steward* | Loan System (FinUnion) | Core Banking (для списаний), DWH, BI | Через Loan Service (role `LoanEditor`) | Соответствие лимиту, проверка процентной ставки, отсутствие дублирования договоров |
+| Договор | Продуктовый департамент (Product Fulfilment) | Product Ops – *Agreement Steward* | CRM / Core (при открытии) | Core Banking, DWH, BI | Через Agreement Service (role `AgreementEditor`) | Согласованность дат начала/окончания, тип продукта в справочнике |
+| Транзакция | Финансовый департамент (Payments) | Payments Ops – *Transaction Steward* | Core Banking / Card Processing (в режиме реального времени) | DWH, BI, AML‑engine | Транзакции только «append‑only», корректировать нельзя | Сумма > 0, валюта совпадает, уникальный идентификатор |
+| Продукт | Продуктовый департамент | Product Ops – *Product Steward* | MDM Product Hub | Core, Card, Loan, CRM, DWH | Через MDM UI (role `ProductEditor`) | Версионность, уникальность кода, соответствие тарифам |
+| Обращение | Contact‑Center (Customer Interaction) | CX Ops – *Interaction Steward* | Contact‑Center | CRM, DWH, BI | Через Interaction Service (role `InteractionEditor`) | Обязательные поля (канал, тема), срок SLA |
+| Контрагент | Risk‑Management (AML) | Counterparty Steward | Core Banking | Loan System, Card Processing, AML, DWH | Через Counterparty Service (role `CounterpartyEditor`) | Уникальный ИНН/ОГРН, проверка в внешних списках |
+| Документ | Legal / Compliance | Document Steward | Document Management System | MDM, Core, BI | Через Object Store API (role `DocumentUploader`) | Формат PDF/IMG, подписан цифровой подписью, метаданные |
+| Тариф/Комиссия | Pricing Office | Pricing Steward | MDM Product Hub | Product, Core, Card, Loan | Через Pricing Service (role `PricingEditor`) | Тестовое начисление, валютный код, periodicity |
+| Отделение / Канал | Операционный департамент (Channel Management) | Channel Steward | CRM / MDM Channel Hub | Core, Card, Loan, Contact‑Center | Через Channel Service (role `ChannelEditor`) | Уникальный код, привязка к региону, статус |
