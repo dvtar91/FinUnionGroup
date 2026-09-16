@@ -41,7 +41,10 @@ flowchart LR
     MDM_Cust[MDM Customer Hub]
     MDM_Prod[MDM Product Hub]
     MDM_Counter[MDM Counterparty Hub]
+
     Integration["Integration Layer (ESB / Kafka)"]
+    DataHub[DataHub]
+
     DWH[Data Warehouse]
     BI[BI‑Витрины]
     Reg["Regulator (External)"]
@@ -79,6 +82,14 @@ flowchart LR
     Integration -->|Publish| MDM_Prod
     Integration -->|Publish| MDM_Counter
 
+    %% DataHub connections
+    MDM_Cust -->|Meta‑events| DataHub
+    MDM_Prod -->|Meta‑events| DataHub
+    MDM_Counter -->|Meta‑events| DataHub
+    Integration -->|Meta‑events| DataHub
+    DataHub -->|Metadata feed| DWH
+    DataHub -->|Metadata feed| BI
+
     style FU_CRM fill:#b7c78f,stroke:#555
     style RB_CRM fill:#b7c78f,stroke:#555
     style MDM_Cust fill:#ffdd99,stroke:#555
@@ -86,4 +97,5 @@ flowchart LR
     style DWH fill:#c2e0ff,stroke:#555
     style BI fill:#c2e0ff,stroke:#555
     style Reg fill:#f2c2c2,stroke:#555
+    style DataHub fill:#ffd700,stroke:#555
 ```
